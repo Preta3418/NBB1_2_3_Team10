@@ -79,14 +79,22 @@ class SecurityConfig(
                     "/api/v1/member/reissue").permitAll()
 
                 .requestMatchers(
+                    "/swagger",
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/api-docs",
+                    "/api-docs/**",
+                    "/v3/api-docs/**").permitAll()
+
+                .requestMatchers(
                     "/api/v1/member/{id}/**",
                     "member/{id}/**",
                     "/api/v1/job-post/**",
                     "/job-post/**",
                     "/api/v1/like/**").hasRole("USER")
 
-                .requestMatchers(HttpMethod.DELETE,"/api/member/{id}").authenticated()
-                .requestMatchers(HttpMethod.PUT,"/api/member/{id}").authenticated()
+                .requestMatchers(HttpMethod.DELETE,"/api/v1/member/{id}").authenticated()
+                .requestMatchers(HttpMethod.PUT,"/api/v1/member/{id}").authenticated()
                 .requestMatchers("/api/v1/chat/**").authenticated()
 
                 .anyRequest().authenticated()
@@ -95,7 +103,7 @@ class SecurityConfig(
         http.addFilterBefore(JWTFilter(jwtUtil), LoginFilter::class.java)
 
         val loginFilter = LoginFilter(authenticationManager(), jwtUtil, refreshRepository)
-        loginFilter.setFilterProcessesUrl("/api/member/login")
+        loginFilter.setFilterProcessesUrl("/api/v1/member/login")
         http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         http.addFilterBefore(CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter::class.java)
